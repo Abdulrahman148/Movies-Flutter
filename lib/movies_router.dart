@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:movies_flutter/data/api/movies_api.dart';
 import 'package:movies_flutter/presentation/screens/movie_details_screen.dart';
-import 'package:movies_flutter/presentation/screens/popular_movies_screen.dart';
+import 'package:movies_flutter/presentation/screens/movies_screen.dart';
 import 'package:provider/provider.dart';
 import 'constants/strings.dart';
-import 'data/repository/repository.dart';
 
 class MoviesRouter {
   Route? generateRoute(RouteSettings settengs) {
@@ -11,7 +11,7 @@ class MoviesRouter {
       case popularMoviesScreen:
         return MaterialPageRoute(
             builder: (_) => ChangeNotifierProvider(
-                  create: (context) => Repository(),
+                  create: (context) => MoviesApi(),
                   child: PopularMoviesScreen(),
                 ));
 

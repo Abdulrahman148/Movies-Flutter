@@ -3,8 +3,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:movies_flutter/constants/colors.dart';
+import 'package:movies_flutter/data/api/movies_api.dart';
 import 'package:movies_flutter/data/model/PopularMovies.dart';
-import 'package:movies_flutter/data/repository/repository.dart';
 import 'package:movies_flutter/presentation/widgets/popular_movie_item.dart';
 import 'package:provider/provider.dart';
 
@@ -17,8 +17,9 @@ class PopularMoviesScreen extends StatefulWidget {
 
 class _MoviesScreenState extends State<PopularMoviesScreen> {
   int _selectedIndex = 0;
-  static Repository repository = Repository();
-  static List<Results>? results = repository.popularMovies.results;
+  static MoviesApi moviesApi = MoviesApi();
+  static List<Results>? popularResults = moviesApi.popularMovies.results;
+  static List<Results>? topRatedResults = moviesApi.topRatedMovies.results;
 
   @override
   void initState() {
@@ -27,8 +28,9 @@ class _MoviesScreenState extends State<PopularMoviesScreen> {
 
   @override
   Widget build(BuildContext context) {
-    repository = Provider.of<Repository>(context);
-    repository.fetchMovies();
+    moviesApi = Provider.of<MoviesApi>(context);
+    moviesApi.fetchPopularMovies();
+    moviesApi.fetchTopRatedMovies();
     return Scaffold(
       appBar: AppBar(
         backgroundColor: _colorOptions.elementAt(_selectedIndex),
@@ -42,9 +44,9 @@ class _MoviesScreenState extends State<PopularMoviesScreen> {
         ),
       ),
       body: Center(
-          child: repository.popularMovies.results == null
+          child: moviesApi.popularMovies.results == null
               ? getLoadingUI()
-              : _widgetOptions.elementAt(_selectedIndex)),
+              : _widgetOptions.elementAt(_selectedIndex),),
       bottomNavigationBar: BottomNavigationBar(
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
@@ -103,15 +105,12 @@ class _MoviesScreenState extends State<PopularMoviesScreen> {
   }
 
   static final List<Widget> _widgetOptions = <Widget>[
-    getBodyUI(results),
-    Text(
-      'Index 1: Now Playing soon ...',
-      style: optionStyle,
-    ),
+    getBodyUI(popularResults),
     Text(
       'Index 2: Top Rated soon ...',
       style: optionStyle,
     ),
+    getBodyUI(topRatedResults),
     Text(
       'Index 3: Search soon ...',
       style: optionStyle,
